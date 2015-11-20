@@ -11,24 +11,29 @@ public:
 
     void init(int * data);
     int  count() const;
-    void outputData() const;
+    void outputData();
     void outputDataTips();
 
     void exclusiveRange();
+    void exclusiveNumber();
 
 private:
     Sudoku(const Sudoku& o);
-
-    void outputBox(int index, int * box);
 
     void stepBox();
     void stepRow();
     void stepColumn();
 
+    void stepNumber(int num);
+
     void updateDataTips(int i, int * indexs);
     void updateDataFromTips();
 
-static int getIndex(int * tips);
+static void outputBox9(int index, int * box);
+static void outputBox81(int * box);
+static int  getIndex(int * tips);
+static int  getBoxUniqueIndex(int * box, int * indexs);
+static void setBox(int * box, int * indexs, int len, int value);
 static void getBoxIndex(int index, int * indexs);
 static void getRowIndex(int index, int * indexs);
 static void getColumnIndex(int index, int * indexs);

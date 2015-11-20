@@ -24,7 +24,7 @@ private:
     void stepRow();
     void stepColumn();
 
-    void stepNumber(int num);
+    int  stepNumber(int num);
 
     void updateDataTips(int i, int * indexs);
     void updateDataFromTips();

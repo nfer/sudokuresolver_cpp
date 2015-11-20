@@ -33,7 +33,7 @@ int main(int argc, char * argv[])
     int countBefore, countAfter = 0, loop = 0;
 
     Sudoku * sudoku = new Sudoku(data);
-    // sudoku->outputData();
+    sudoku->outputData();
     countBefore = sudoku->count();
     cout << "data count:" << countBefore << endl;
 
@@ -47,10 +47,22 @@ int main(int argc, char * argv[])
     cout << "after exclusiveRange data count:" << countAfter << endl;
     cout << "exclusiveRange loop count:" << loop << endl;
 
-    sudoku->exclusiveNumber();
+    // sudoku->exclusiveNumber();
+    // sudoku->outputData();
+    // countAfter = sudoku->count();
+    // cout << "data count:" << countAfter << endl;
+
+    countAfter = -1;
+    while (countBefore != countAfter && countAfter != 81) {
+        countBefore = countAfter;
+        sudoku->exclusiveNumber();
+        sudoku->exclusiveRange();
+        countAfter = sudoku->count();
+        loop++;
+    }
     sudoku->outputData();
-    countAfter = sudoku->count();
-    cout << "data count:" << countAfter << endl;
+    cout << "after exclusiveNumber data count:" << countAfter << endl;
+    cout << "exclusiveNumber loop count:" << loop << endl;
 
     delete sudoku;
     return 0;

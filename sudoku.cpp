@@ -76,8 +76,13 @@ void Sudoku::exclusiveRange() {
 }
 
 void Sudoku::exclusiveNumber() {
+    int count = 0;
     for (int i = 0; i < 9; i++) {
-        stepNumber(i+1);
+        do {
+            count = stepNumber(i+1);
+            // if (count > 0)
+            //     printf("exclusiveNumber exclusive %d items on number %d\n", count, i+1);
+        } while (count > 0);
     }
     // stepNumber(2);
 }
@@ -107,7 +112,7 @@ void Sudoku::stepColumn() {
     }
 }
 
-void Sudoku::stepNumber(int num) {
+int Sudoku::stepNumber(int num) {
     int tips[81] = {0};
     for (int i = 0; i < 81; i++) {
         int value = data[i];
@@ -134,15 +139,20 @@ void Sudoku::stepNumber(int num) {
     }
     // outputBox81(tips);
 
+    int count = 0;
     int boxIndexs[] = {0, 3, 6, 27, 30, 36, 54, 57, 60};
     for (int i = 0; i < 9; i++) {
         int indexs[9] = {0};
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
         int index = getBoxUniqueIndex(tips, indexs);
         // printf("stepNumber getBoxUniqueIndex %d at box %d\n", index, i);
-        if (index != 0)
+        if (index != 0) {
             data[index] = num;
+            count++;
+        }
     }
+
+    return count;
 }
 
 void Sudoku::updateDataTips(int i, int * indexs) {

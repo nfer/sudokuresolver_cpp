@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "sudoku.h"
+#include "precanned.h"
 
 using namespace std;
 
@@ -31,6 +32,11 @@ int main(int argc, char * argv[])
                     0, 0, 0, 0, 0, 0, 0, 0, 0,
                     7, 4, 0, 0, 0, 0, 0, 8, 6};
     int countBefore, countAfter = 0, loop = 0;
+
+    if (!Precanned::parse(argc, argv, data)) {
+        cout << "Precanned parse failed" << endl;
+        return 0;
+    }
 
     Sudoku * sudoku = new Sudoku(data);
     sudoku->outputData();

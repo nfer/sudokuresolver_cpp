@@ -69,10 +69,16 @@ void Sudoku::outputDataTips() {
 }
 
 void Sudoku::exclusiveRange() {
-    stepBox();
-    stepRow();
-    stepColumn();
-    updateDataFromTips();
+    for (int i = 0; i < 81; i++) {
+        if (data[i] != 0)
+            continue;
+
+        int value = stepIndex(i);
+        if (value != 0) {
+            printf("get value %d at %d:%d with exclusiveRange\n",
+                value, i / 9 + 1, i % 9 + 1);
+        }
+    }
 }
 
 void Sudoku::exclusiveNumber() {
@@ -110,6 +116,34 @@ void Sudoku::stepColumn() {
         Sudoku::getColumnIndex(i, indexs);
         updateDataTips(i, indexs);
     }
+}
+
+int Sudoku::stepIndex(int index) {
+    int indexsBox[9] = {0}, indexsRow[9] = {0}, indexsCol[9] = {0};
+    int tips[9] = {1,2,3,4,5,6,7,8,9};
+
+    Sudoku::getBoxIndex(index, indexsBox);
+    Sudoku::getRowIndex(index, indexsRow);
+    Sudoku::getColumnIndex(index, indexsCol);
+
+    removeTipsWithDataIndexs(tips, data, indexsBox, 9);
+    removeTipsWithDataIndexs(tips, data, indexsRow, 9);
+    removeTipsWithDataIndexs(tips, data, indexsCol, 9);
+
+    // check tips array after removed by box/row/col
+    int value = 0;
+    for (int i = 0; i < 9; i++) {
+        if (tips[i] != 0) {
+            if (value != 0) {
+                return 0;
+            }
+
+            value = tips[i];
+        }
+    }
+
+    data[index] = value;
+    return value;
 }
 
 int Sudoku::stepNumber(int num) {
@@ -180,6 +214,16 @@ void Sudoku::updateDataFromTips() {
 }
 
 // =========================static functions===================================
+void Sudoku::removeTipsWithDataIndexs(int * tips, int *data, int * indexs, int len) {
+    for (int i = 0; i < len; i++) {
+        int index = indexs[i];
+        int value = data[index];
+        if (value != 0) {
+            tips[value-1] = 0;
+        }
+    }
+}
+
 void Sudoku::outputBox9(int index, int box[]) {
     printf("┌───┬─%d─┬───┐\n", index % 9 + 1);
 

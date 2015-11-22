@@ -24,11 +24,13 @@ private:
     void stepRow();
     void stepColumn();
 
+    int  stepIndex(int index);
     int  stepNumber(int num);
 
     void updateDataTips(int i, int * indexs);
     void updateDataFromTips();
 
+static void removeTipsWithDataIndexs(int * tips, int *data, int * indexs, int len);
 static void outputBox9(int index, int * box);
 static void outputBox81(int * box);
 static int  getIndex(int * tips);

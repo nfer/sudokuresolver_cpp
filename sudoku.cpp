@@ -75,8 +75,7 @@ void Sudoku::exclusiveRange() {
 
         int value = stepIndex(i);
         if (value != 0) {
-            printf("get value %d at %d:%d with exclusiveRange\n",
-                value, i / 9 + 1, i % 9 + 1);
+            outputDataStep(value, i, "exclusiveRange");
         }
     }
 }
@@ -148,6 +147,7 @@ int Sudoku::stepIndex(int index) {
 
 int Sudoku::stepNumber(int num) {
     int tips[81] = {0};
+
     for (int i = 0; i < 81; i++) {
         int value = data[i];
 
@@ -160,8 +160,9 @@ int Sudoku::stepNumber(int num) {
             Sudoku::getColumnIndex(i, indexs);
             setBox(tips, indexs, 9, 1);
         }
-        else
-            tips[i] |= (value != 0);
+        else if (value != 0) {
+            tips[i] = value;
+        }
     }
 
     for (int i = 0; i < 81; i++) {
@@ -171,18 +172,40 @@ int Sudoku::stepNumber(int num) {
         else
             tips[i] = 0;
     }
-    // outputBox81(tips);
 
     int count = 0;
     int boxIndexs[] = {0, 3, 6, 27, 30, 36, 54, 57, 60};
+    int rowIndexs[] = {0, 9, 18, 27, 36, 45, 54, 63, 72};
+    int colIndexs[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     for (int i = 0; i < 9; i++) {
         int indexs[9] = {0};
+        int index = 0;
+
+        // get box unique index
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
-        int index = getBoxUniqueIndex(tips, indexs);
-        // printf("stepNumber getBoxUniqueIndex %d at box %d\n", index, i);
-        if (index != 0) {
+        index = getBoxUniqueIndex(tips, indexs);
+        if (index != 0 && data[index] == 0) {
             data[index] = num;
             count++;
+            outputDataStep(num, index, "exclusiveNumber by box");
+        }
+
+        // get row unique index
+        Sudoku::getRowIndex(rowIndexs[i], indexs);
+        index = getBoxUniqueIndex(tips, indexs);
+        if (index != 0 && data[index] == 0) {
+            data[index] = num;
+            count++;
+            outputDataStep(num, index, "exclusiveNumber by row");
+        }
+
+        // get col unique index
+        Sudoku::getColumnIndex(colIndexs[i], indexs);
+        index = getBoxUniqueIndex(tips, indexs);
+        if (index != 0 && data[index] == 0) {
+            data[index] = num;
+            count++;
+            outputDataStep(num, index, "exclusiveNumber by col");
         }
     }
 
@@ -211,6 +234,16 @@ void Sudoku::updateDataFromTips() {
             data[i] = index;
         }
     }
+}
+
+void Sudoku::outputDataStep(int num, int index, const char * stepName) {
+#ifdef DEBUG
+    printf("get number %d at %d:%d with %s\n",
+                num, index / 9 + 1, index % 9 + 1, stepName);
+    outputData();
+    printf("data count:%d\n", count());
+    printf("================================================================\n\n");
+#endif
 }
 
 // =========================static functions===================================
@@ -254,11 +287,12 @@ void Sudoku::outputBox9(int index, int box[]) {
 }
 
 void Sudoku::outputBox81(int *box) {
-    printf("┌───────┬───────┬───────┐\n");
+    printf("   1 2 3   4 5 6   7 8 9  \n");
+    printf(" ┌───────┬───────┬───────┐\n");
 
     for (int i = 0; i < 81; i++) {
         if (i % 9 == 0)
-            printf("│");
+            printf("%d|", i / 9 + 1);
         int temp = box[i];
         if (temp == 0)
             printf("  ");
@@ -266,16 +300,17 @@ void Sudoku::outputBox81(int *box) {
             printf(" %d", temp);
 
         if (i % 3 == 2) {
-            printf(" │");
+            printf(" |");
             if (i % 9 == 8 && i % 27 != 26)
                 printf("\n");
 
             if (i % 27 == 26 && i != 81 - 1)
-                printf("\n├───────┼───────┼───────┤\n");
+                printf("\n ├───────┼───────┼───────┤\n");
         }
     }
 
-    printf("\n└───────┴───────┴───────┘\n");
+    printf("\n └───────┴───────┴───────┘\n");
+    printf("   1 2 3   4 5 6   7 8 9  \n");
 }
 
 int Sudoku::getIndex(int * tips) {
@@ -296,14 +331,14 @@ int Sudoku::getIndex(int * tips) {
 // params: box81: 9x9 data array
 // params: boxIndexs: 3x3 box index array
 int Sudoku::getBoxUniqueIndex(int * box81, int * boxIndexs) {
-    int value = 0;
+    int value = -1;
 
     for (int i = 0; i < 9; i++) {
         int index = boxIndexs[i];
         // get one not-none item, we sign it;        
         if (box81[index] != 0) {
             // if there's more not-none items, just return 0
-            if (value != 0)
+            if (value != -1)
                 return 0;
 
             value = index;

@@ -29,6 +29,7 @@ bool Precanned::parse(int argc, char * argv[], int * data) {
     while(fgets(line, sizeof(line), fd)) {
         if (!parseLine(line, count, data)) {
             printf("parse line %s failed\n", line);
+            fclose(fd);
             return false;
         }
 

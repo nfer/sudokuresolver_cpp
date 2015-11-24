@@ -21,8 +21,8 @@ public:
     void outputData();
     void outputDataTips();
 
-    void exclusiveRange();
-    void exclusiveNumber();
+    bool exclusiveRange();
+    bool exclusiveNumber();
 
 private:
     Sudoku(const Sudoku& o);

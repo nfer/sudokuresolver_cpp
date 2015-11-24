@@ -99,28 +99,34 @@ void Sudoku::outputDataTips() {
     }
 }
 
-void Sudoku::exclusiveRange() {
+bool Sudoku::exclusiveRange() {
+    bool found = false;
     for (int i = 0; i < 81; i++) {
         if (data[i] != 0)
             continue;
 
         int value = stepIndex(i);
         if (value != 0) {
+            found = true;
             outputDataStep(value, i, "exclusiveRange");
         }
     }
+    return found;
 }
 
-void Sudoku::exclusiveNumber() {
-    int count = 0;
+bool Sudoku::exclusiveNumber() {
+    bool found = false;
     for (int i = 0; i < 9; i++) {
+        int count = 0;
         do {
             count = stepNumber(i+1);
-            // if (count > 0)
-            //     printf("exclusiveNumber exclusive %d items on number %d\n", count, i+1);
+            if (count > 0) {
+                found = true;
+            }
         } while (count > 0);
     }
     // stepNumber(2);
+    return found;
 }
 
 // =========================private functions==================================

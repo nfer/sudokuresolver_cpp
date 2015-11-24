@@ -31,46 +31,63 @@ int main(int argc, char * argv[])
                     0, 8, 0, 1, 0, 7, 0, 2, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0,
                     7, 4, 0, 0, 0, 0, 0, 8, 6};
-    int countBefore, countAfter = 0, loop = 0;
+    int count, lastCount = -1, loop;
+    bool found;
 
     if (!Precanned::parse(argc, argv, data)) {
-        cout << "Precanned parse failed" << endl;
+        printf("Precanned parse failed\n");
         return 0;
     }
 
     Sudoku * sudoku = new Sudoku(data);
     if (!sudoku->valid()) {
-        cout << "the precanned data is not valid." << endl;
-        delete sudoku;
-        return 0;
+        printf("Precanned data is not valid.\n");
+        goto error;
     }
 
     sudoku->outputData();
-    countBefore = sudoku->count();
-    cout << "data count:" << countBefore << endl;
+    count = sudoku->count();
+    printf("init data count %d\n", count);
 
-    while (countBefore != countAfter && countAfter != 81) {
-        countBefore = countAfter;
-        sudoku->exclusiveRange();
-        countAfter = sudoku->count();
+start:
+    // check endless loop
+    if (count == lastCount)
+        goto error;
+    lastCount = count;
+
+    // exclusiveRange check loop
+    found = false;
+    loop = 0;
+    do {
+        found = sudoku->exclusiveRange();
         loop++;
-    }
+    } while (found);
     sudoku->outputData();
-    cout << "after exclusiveRange data count:" << countAfter << endl;
-    cout << "exclusiveRange loop count:" << loop << endl;
+    count = sudoku->count();
+    printf("exclusiveRange loop %d, %d data now\n", loop, count);
+    if (count == 81)
+        goto end;
 
-    countAfter = -1;
-    while (countBefore != countAfter && countAfter != 81) {
-        countBefore = countAfter;
-        sudoku->exclusiveNumber();
-        sudoku->exclusiveRange();
-        countAfter = sudoku->count();
+    // exclusiveNumber check loop
+    found = false;
+    loop = 0;
+    do {
+        found = sudoku->exclusiveNumber();
         loop++;
-    }
+    } while (found);
     sudoku->outputData();
-    cout << "after exclusiveNumber data count:" << countAfter << endl;
-    cout << "exclusiveNumber loop count:" << loop << endl;
+    count = sudoku->count();
+    printf("exclusiveNumber loop %d, %d data now\n", loop, count);
+    if (count == 81)
+        goto end;
+    else
+        goto start;
 
+end:
     delete sudoku;
     return 0;
+
+error:
+    delete sudoku;
+    return -1;
 }

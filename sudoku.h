@@ -5,11 +5,18 @@
 class Sudoku {
 
 public:
+    enum CHECK_VALID_TYPE {
+        NODUP,
+        UNIQUE,
+        FULL
+    };
+
     Sudoku();
     Sudoku(int * data);
     ~Sudoku();
 
     void init(int * data);
+    bool valid();
     int  count() const;
     void outputData();
     void outputDataTips();
@@ -41,6 +48,7 @@ static void setBox(int * box, int * indexs, int len, int value);
 static void getBoxIndex(int index, int * indexs);
 static void getRowIndex(int index, int * indexs);
 static void getColumnIndex(int index, int * indexs);
+static int  checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type);
 
 private:
     int * data;

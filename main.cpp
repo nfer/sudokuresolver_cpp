@@ -39,6 +39,12 @@ int main(int argc, char * argv[])
     }
 
     Sudoku * sudoku = new Sudoku(data);
+    if (!sudoku->valid()) {
+        cout << "the precanned data is not valid." << endl;
+        delete sudoku;
+        return 0;
+    }
+
     sudoku->outputData();
     countBefore = sudoku->count();
     cout << "data count:" << countBefore << endl;
@@ -52,11 +58,6 @@ int main(int argc, char * argv[])
     sudoku->outputData();
     cout << "after exclusiveRange data count:" << countAfter << endl;
     cout << "exclusiveRange loop count:" << loop << endl;
-
-    // sudoku->exclusiveNumber();
-    // sudoku->outputData();
-    // countAfter = sudoku->count();
-    // cout << "data count:" << countAfter << endl;
 
     countAfter = -1;
     while (countBefore != countAfter && countAfter != 81) {

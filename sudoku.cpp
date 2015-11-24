@@ -5,6 +5,10 @@
 
 #include "sudoku.h"
 
+static int boxIndexs[] = {0, 3,  6, 27, 30, 36, 54, 57, 60}; // (i / 3) * 27 + (i % 3) * 3
+static int rowIndexs[] = {0, 9, 18, 27, 36, 45, 54, 63, 72}; // i * 9
+static int colIndexs[] = {0, 1,  2,  3,  4,  5,  6,  7,  8}; // i
+
 Sudoku::Sudoku() {
     data = new int[81];
     dataExcl = new int[81];
@@ -43,6 +47,33 @@ void Sudoku::init(int *_data) {
             }
         }
     }
+}
+
+bool Sudoku::valid() {
+    int indexs[9] = {0};
+    for (int i = 0; i < 9; i++) {
+        // check box[i] valid
+        Sudoku::getBoxIndex(boxIndexs[i], indexs);
+        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+            printf("check box %d valid failed.\n", i);
+            return false;
+        }
+
+        // check row[i] valid
+        Sudoku::getRowIndex(rowIndexs[i], indexs);
+        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+            printf("check row %d valid failed.\n", i);
+            return false;
+        }
+
+        // check col[i] valid
+        Sudoku::getColumnIndex(colIndexs[i], indexs);
+        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+            printf("check col %d valid failed.\n", i);
+            return false;
+        }
+    }
+    return true;
 }
 
 int Sudoku::count() const {
@@ -174,9 +205,6 @@ int Sudoku::stepNumber(int num) {
     }
 
     int count = 0;
-    int boxIndexs[] = {0, 3, 6, 27, 30, 36, 54, 57, 60};
-    int rowIndexs[] = {0, 9, 18, 27, 36, 45, 54, 63, 72};
-    int colIndexs[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     for (int i = 0; i < 9; i++) {
         int indexs[9] = {0};
         int index = 0;
@@ -375,4 +403,48 @@ void Sudoku::getColumnIndex(int index, int * indexs) {
     for (int i = 0; i < 9; i++) {
         indexs[i] = result[i] + index % 9;
     }
+}
+
+int Sudoku::checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type) {
+    int flag[9] = {0};
+    int box[9] = {0};
+    int count = 0, index = -1;
+            // outputBox9(0, box);
+            // outputBox9(0, flag);
+
+    for (int i = 0; i < 9; i++) {
+        int value = data[indexs[i]];
+        box[i] = value;
+        if (value != 0) {
+            flag[value-1]++;
+            count++;
+            index = indexs[i];
+        }
+
+        if (flag[value-1] > 1) {
+            printf("there is duplicate number %d\n", value);
+            outputBox9(0, box);
+            return -1;
+        }
+    }
+
+    switch (type) {
+        case UNIQUE:
+            if (count == 1)
+                return index;
+            else
+                return -1;
+
+        case FULL:
+            if (count == 9)
+                return 0;
+            else
+                return -1;
+            break;
+
+        case NODUP:
+        default:
+            break;
+    }
+    return 0;
 }

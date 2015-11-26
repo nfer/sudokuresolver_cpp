@@ -51,9 +51,8 @@ static void getColumnIndex(int index, int * indexs);
 static int  checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type);
 
 private:
-    int * data;
-    int * dataExcl;
-    int ** dataTips;
+    int * mData;
+    int ** mTips;
 };
 
 #endif

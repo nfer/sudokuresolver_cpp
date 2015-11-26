@@ -10,40 +10,37 @@ static int rowIndexs[] = {0, 9, 18, 27, 36, 45, 54, 63, 72}; // i * 9
 static int colIndexs[] = {0, 1,  2,  3,  4,  5,  6,  7,  8}; // i
 
 Sudoku::Sudoku() {
-    data = new int[81];
-    dataExcl = new int[81];
-    dataTips = new int*[81];
+    mData = new int[81];
+    mTips = new int*[81];
     for(int i = 0; i < 81; i++)
-        dataTips[i] = new int[9];
+        mTips[i] = new int[9];
 }
 
-Sudoku::Sudoku(int *_data) {
-    data = new int[81];
-    dataExcl = new int[81];
-    dataTips = new int*[81];
+Sudoku::Sudoku(int *data) {
+    mData = new int[81];
+    mTips = new int*[81];
     for(int i = 0; i < 81; i++)
-        dataTips[i] = new int[9];
+        mTips[i] = new int[9];
 
-    init(_data);
+    init(data);
 }
 
 Sudoku::~Sudoku() {
-    delete []data;
-    delete []dataExcl;
+    delete []mData;
     for(int i = 0; i < 81; i++)
-        delete []dataTips[i];
-    delete []dataTips;
+        delete []mTips[i];
+    delete []mTips;
 }
 
-void Sudoku::init(int *_data) {
+void Sudoku::init(int *data) {
     for (int i = 0; i < 81; i++) {
-        int value = _data[i];
-        data[i] = value;
+        int value = data[i];
+        mData[i] = value;
         if (value != 0) {
-            dataTips[i][value - 1] = value;
+            mTips[i][value - 1] = value;
         } else {
             for (int j = 0; j < 9; j++) {
-                dataTips[i][j] = j + 1;
+                mTips[i][j] = j + 1;
             }
         }
     }
@@ -54,21 +51,21 @@ bool Sudoku::valid() {
     for (int i = 0; i < 9; i++) {
         // check box[i] valid
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
-        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+        if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
             printf("check box %d valid failed.\n", i);
             return false;
         }
 
         // check row[i] valid
         Sudoku::getRowIndex(rowIndexs[i], indexs);
-        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+        if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
             printf("check row %d valid failed.\n", i);
             return false;
         }
 
         // check col[i] valid
         Sudoku::getColumnIndex(colIndexs[i], indexs);
-        if (0 != Sudoku::checkDataWithIndexs(data, indexs, NODUP)) {
+        if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
             printf("check col %d valid failed.\n", i);
             return false;
         }
@@ -79,7 +76,7 @@ bool Sudoku::valid() {
 int Sudoku::count() const {
     int count = 0;
     for (int i = 0; i < 81; i++) {
-        if (data[i] != 0) {
+        if (mData[i] != 0) {
             count++;
         }
     }
@@ -87,22 +84,22 @@ int Sudoku::count() const {
 }
 
 void Sudoku::outputData() {
-    outputBox81(data);
+    outputBox81(mData);
 }
 
 void Sudoku::outputDataTips() {
     for (int i = 0; i < 81; i++) {
-        if (data[i] != 0)
+        if (mData[i] != 0)
             continue;
 
-        outputBox9(i, dataTips[i]);
+        outputBox9(i, mTips[i]);
     }
 }
 
 bool Sudoku::exclusiveRange() {
     bool found = false;
     for (int i = 0; i < 81; i++) {
-        if (data[i] != 0)
+        if (mData[i] != 0)
             continue;
 
         int value = stepIndex(i);
@@ -162,9 +159,9 @@ int Sudoku::stepIndex(int index) {
     Sudoku::getRowIndex(index, indexsRow);
     Sudoku::getColumnIndex(index, indexsCol);
 
-    removeTipsWithDataIndexs(tips, data, indexsBox, 9);
-    removeTipsWithDataIndexs(tips, data, indexsRow, 9);
-    removeTipsWithDataIndexs(tips, data, indexsCol, 9);
+    removeTipsWithDataIndexs(tips, mData, indexsBox, 9);
+    removeTipsWithDataIndexs(tips, mData, indexsRow, 9);
+    removeTipsWithDataIndexs(tips, mData, indexsCol, 9);
 
     // check tips array after removed by box/row/col
     int value = 0;
@@ -178,7 +175,7 @@ int Sudoku::stepIndex(int index) {
         }
     }
 
-    data[index] = value;
+    mData[index] = value;
     return value;
 }
 
@@ -186,7 +183,7 @@ int Sudoku::stepNumber(int num) {
     int tips[81] = {0};
 
     for (int i = 0; i < 81; i++) {
-        int value = data[i];
+        int value = mData[i];
 
         if (value == num) {
             int indexs[9] = {0};
@@ -218,8 +215,8 @@ int Sudoku::stepNumber(int num) {
         // get box unique index
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && data[index] == 0) {
-            data[index] = num;
+        if (index != 0 && mData[index] == 0) {
+            mData[index] = num;
             count++;
             outputDataStep(num, index, "exclusiveNumber by box");
         }
@@ -227,8 +224,8 @@ int Sudoku::stepNumber(int num) {
         // get row unique index
         Sudoku::getRowIndex(rowIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && data[index] == 0) {
-            data[index] = num;
+        if (index != 0 && mData[index] == 0) {
+            mData[index] = num;
             count++;
             outputDataStep(num, index, "exclusiveNumber by row");
         }
@@ -236,8 +233,8 @@ int Sudoku::stepNumber(int num) {
         // get col unique index
         Sudoku::getColumnIndex(colIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && data[index] == 0) {
-            data[index] = num;
+        if (index != 0 && mData[index] == 0) {
+            mData[index] = num;
             count++;
             outputDataStep(num, index, "exclusiveNumber by col");
         }
@@ -247,25 +244,25 @@ int Sudoku::stepNumber(int num) {
 }
 
 void Sudoku::updateDataTips(int i, int * indexs) {
-    if (data[i] != 0)
+    if (mData[i] != 0)
         return;
 
     for (int j = 0; j < 9; j++) {
         int index = indexs[j];
-        int value = data[index];
+        int value = mData[index];
         if (value != 0)
-            dataTips[i][value - 1] = 0;
+            mTips[i][value - 1] = 0;
     }
 }
 
 void Sudoku::updateDataFromTips() {
     for (int i = 0; i < 81; i++) {
-        if (data[i] != 0)
+        if (mData[i] != 0)
             continue;
 
-        int index = Sudoku::getIndex(dataTips[i]);
+        int index = Sudoku::getIndex(mTips[i]);
         if (index != 0) {
-            data[i] = index;
+            mData[i] = index;
         }
     }
 }

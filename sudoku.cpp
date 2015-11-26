@@ -33,11 +33,13 @@ Sudoku::~Sudoku() {
 }
 
 void Sudoku::init(int *data) {
+    mCount = 0;
     for (int i = 0; i < 81; i++) {
         int value = data[i];
         mData[i] = value;
         if (value != 0) {
             mTips[i][value - 1] = value;
+            mCount++;
         } else {
             for (int j = 0; j < 9; j++) {
                 mTips[i][j] = j + 1;
@@ -73,16 +75,6 @@ bool Sudoku::valid() {
     return true;
 }
 
-int Sudoku::count() const {
-    int count = 0;
-    for (int i = 0; i < 81; i++) {
-        if (mData[i] != 0) {
-            count++;
-        }
-    }
-    return count;
-}
-
 void Sudoku::outputData() {
     outputBox81(mData);
 }
@@ -105,6 +97,7 @@ bool Sudoku::exclusiveRange() {
         int value = stepIndex(i);
         if (value != 0) {
             found = true;
+            mCount++;
             outputDataStep(value, i, "exclusiveRange");
         }
     }
@@ -118,6 +111,7 @@ bool Sudoku::exclusiveNumber() {
         do {
             count = stepNumber(i+1);
             if (count > 0) {
+                mCount += count;
                 found = true;
             }
         } while (count > 0);

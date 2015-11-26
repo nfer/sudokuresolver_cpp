@@ -17,7 +17,7 @@ public:
 
     void init(int * data);
     bool valid();
-    int  count() const;
+    int  count() const {return mCount;};
     void outputData();
     void outputDataTips();
 
@@ -53,6 +53,7 @@ static int  checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type)
 private:
     int * mData;
     int ** mTips;
+    int mCount;
 };
 
 #endif

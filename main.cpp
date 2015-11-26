@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
     Sudoku * sudoku = new Sudoku(data);
     if (!sudoku->valid()) {
         printf("Precanned data is not valid.\n");
-        goto error;
+        goto end;
     }
 
     sudoku->outputData();
@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
 start:
     // check endless loop
     if (count == lastCount)
-        goto error;
+        goto end;
     lastCount = count;
 
     // exclusiveRange check loop
@@ -85,9 +85,5 @@ start:
 
 end:
     delete sudoku;
-    return 0;
-
-error:
-    delete sudoku;
-    return -1;
+    return (count != 81);
 }

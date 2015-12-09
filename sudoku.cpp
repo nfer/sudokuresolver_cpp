@@ -77,6 +77,7 @@ void Sudoku::outputDataTips() {
 
 bool Sudoku::exclusiveRange() {
     bool found = false;
+
     for (int i = 0; i < 81; i++) {
         if (mData[i] != 0)
             continue;
@@ -84,10 +85,9 @@ bool Sudoku::exclusiveRange() {
         int value = stepIndex(i);
         if (value != 0) {
             found = true;
-            mCount++;
-            outputDataStep(value, i, "exclusiveRange");
         }
     }
+
     return found;
 }
 
@@ -132,31 +132,75 @@ void Sudoku::stepColumn() {
     }
 }
 
+/**
+* STEP1: exclusive values at the same box/row/col
+* STEP2: check whether the index has the unique value to set
+*
+* e.g.:  for sudoku with digits below, we want process index `25`(3,8):
+* ┌───────┬───────┬───────┐
+* |       |   2 3 |   1   |
+* |   3   |   7   |     6 |
+* |   7   | 9     |     2 |
+* ├───────┼───────┼───────┤
+* |   1 6 |       |   3   |
+* |       | 4   9 |       |
+* |   2   |       | 8 5   |
+* ├───────┼───────┼───────┤
+* | 1     |     8 |   7   |
+* | 7     |   4   |   8   |
+* |   4   | 2 5   |       |
+* └───────┴───────┴───────┘
+* available values: {1,2,3,4,5,6,7,8,9}
+*
+* STEP1: exclusive values at the same box/row/col
+* ┌───────┬───────┬───────┐
+* |       |   2 3 |   1   |
+* |   3   |   7   |     6 |
+* |   7   | 9     |   x 2 |
+* ├───────┼───────┼───────┤
+* |   1 6 |       |   3   |
+* |       | 4   9 |       |
+* |   2   |       | 8 5   |
+* ├───────┼───────┼───────┤
+* | 1     |     8 |   7   |
+* | 7     |   4   |   8   |
+* |   4   | 2 5   |       |
+* └───────┴───────┴───────┘
+* available values: { , ,3,4,5, ,7,8,9} // by box
+* available values: { , ,3,4,5, , ,8, } // by row
+* available values: { , , ,4, , , , , } // by col
+*
+* STEP2: check whether the index has the unique value to set
+* available values: { , , ,4, , , , , }
+* the unique value is 4.
+*/
 int Sudoku::stepIndex(int index) {
-    int indexsBox[9] = {0}, indexsRow[9] = {0}, indexsCol[9] = {0};
-    int tips[9] = {1,2,3,4,5,6,7,8,9};
+    int availables[9] = {1,2,3,4,5,6,7,8,9};
 
-    Sudoku::getBoxIndex(index, indexsBox);
-    Sudoku::getRowIndex(index, indexsRow);
-    Sudoku::getColIndex(index, indexsCol);
+    // STEP1: exclusive values at the same box/row/col
+    int indexs[9] = {0};
+    getBoxIndex(index, indexs);
+    removeValuesWithDataIndexs(availables, mData, indexs);
+    getRowIndex(index, indexs);
+    removeValuesWithDataIndexs(availables, mData, indexs);
+    getColIndex(index, indexs);
+    removeValuesWithDataIndexs(availables, mData, indexs);
 
-    removeTipsWithDataIndexs(tips, mData, indexsBox, 9);
-    removeTipsWithDataIndexs(tips, mData, indexsRow, 9);
-    removeTipsWithDataIndexs(tips, mData, indexsCol, 9);
-
-    // check tips array after removed by box/row/col
+    // STEP2: check whether the index has the unique value to set
     int value = 0;
     for (int i = 0; i < 9; i++) {
-        if (tips[i] != 0) {
+        if (availables[i] != 0) {
             if (value != 0) {
                 return 0;
             }
-
-            value = tips[i];
+            value = availables[i];
         }
     }
 
+    // as not return, means we found the unique value for this index
+    mCount++;
     mData[index] = value;
+    outputDataStep(value, index, "exclusiveRange");
     return value;
 }
 
@@ -312,12 +356,12 @@ void Sudoku::outputDataStep(int num, int index, const char * stepName, int i) {
 }
 
 // =========================static functions===================================
-void Sudoku::removeTipsWithDataIndexs(int * tips, int *data, int * indexs, int len) {
-    for (int i = 0; i < len; i++) {
+void Sudoku::removeValuesWithDataIndexs(int * availables, int *data, int * indexs) {
+    for (int i = 0; i < 9; i++) {
         int index = indexs[i];
         int value = data[index];
         if (value != 0) {
-            tips[value-1] = 0;
+            availables[value-1] = 0;
         }
     }
 }

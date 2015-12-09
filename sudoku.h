@@ -109,7 +109,14 @@ static void getColIndex(int index, int * indexs);
 */
 static void signBoxWithIndexs(int * box, int * indexs);
 
-static void removeTipsWithDataIndexs(int * tips, int *data, int * indexs, int len);
+/**
+* remove values in available values set
+* params: availables: 9 data array with value [0-9]
+* params: box: 9x9 data array with value [0-9]
+* params: indexs: 9 size indexs array(from getBoxIndex/getRowIndex/getColIndex)
+*/
+static void removeValuesWithDataIndexs(int * availables, int *data, int * indexs);
+
 static int  getIndex(int * tips);
 static int  getBoxUniqueIndex(int * box, int * indexs);
 static int  checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type);

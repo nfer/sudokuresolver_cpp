@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
                     0, 8, 0, 1, 0, 7, 0, 2, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0,
                     7, 4, 0, 0, 0, 0, 0, 8, 6};
-    int count, lastCount = -1, loop;
+    int count = 0, lastCount = -1, loop;
     bool found;
 
     if (!Precanned::parse(argc, argv, data)) {

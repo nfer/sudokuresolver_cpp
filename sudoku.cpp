@@ -93,17 +93,17 @@ bool Sudoku::exclusiveRange() {
 
 bool Sudoku::exclusiveNumber() {
     bool found = false;
+
     for (int i = 0; i < 9; i++) {
         int count = 0;
         do {
             count = stepNumber(i+1);
             if (count > 0) {
-                mCount += count;
                 found = true;
             }
         } while (count > 0);
     }
-    // stepNumber(2);
+
     return found;
 }
 
@@ -160,13 +160,72 @@ int Sudoku::stepIndex(int index) {
     return value;
 }
 
+/**
+* STEP1: exclusive every item already has value
+* STEP2: exclusive every `num` at box/row/col
+* STEP3: check every box/row/col whether has the unique space to place `num`
+*
+* e.g.:  for sudoku with digits below, we want process number `2`:
+* ┌───────┬───────┬───────┐
+* | 6     | 4   8 |     9 |
+* |     9 | 2 5 6 | 3     |
+* |     3 |       | 2     |
+* ├───────┼───────┼───────┤
+* |     2 |   8   | 4     |
+* |       | 9 7 5 |       |
+* |       |       |       |
+* ├───────┼───────┼───────┤
+* |   8   | 1   7 |   2   |
+* |       |       |       |
+* | 7 4   |       |   8 6 |
+* └───────┴───────┴───────┘
+* STEP1: exclusive every item already has value
+* ┌───────┬───────┬───────┐
+* | x     | x   x |     x |
+* |     x | 2 x x | x     |
+* |     x |       | 2     |
+* ├───────┼───────┼───────┤
+* |     2 |   x   | x     |
+* |       | x x x |       |
+* |       |       |       |
+* ├───────┼───────┼───────┤
+* |   x   | x   x |   2   |
+* |       |       |       |
+* | x x   |       |   x x |
+* └───────┴───────┴───────┘
+* STEP2: exclusive every `num` at box/row/col
+* ┌───────┬───────┬───────┐
+* | x   y | x y x | y y x |
+* | y y x | 2 x x | x y y |
+* | y y x | y y y | 2 y y |
+* ├───────┼───────┼───────┤
+* | y y 2 | y x y | x y y |
+* | y y y | x x x | y y   |
+* | y y y | y     | y y   |
+* ├───────┼───────┼───────┤
+* | y x y | x y x | y 2 y |
+* |     y | y     | y y y |
+* | x x y | y     | y x x |
+* └───────┴───────┴───────┘
+* STEP3: check every box/row/col whether has the unique space to place `num`
+* we found:
+*   (1,2) at box1
+*   (8,1) at col1
+*   (5,9) at row5
+*/
+
 int Sudoku::stepNumber(int num) {
     int tips[81] = {0};
+    int count = mCount;
 
+    // STEP1: exclusive every item already has value
     for (int i = 0; i < 81; i++) {
-        int value = mData[i];
+        tips[i] = mData[i] != 0;
+    }
 
-        if (value == num) {
+    // STEP2: exclusive every `num` at box/row/col
+    for (int i = 0; i < 81; i++) {
+        if (mData[i] == num) {
             int indexs[9] = {0};
             Sudoku::getBoxIndex(i, indexs);
             setBox(tips, indexs, 9, 1);
@@ -175,20 +234,9 @@ int Sudoku::stepNumber(int num) {
             Sudoku::getColumnIndex(i, indexs);
             setBox(tips, indexs, 9, 1);
         }
-        else if (value != 0) {
-            tips[i] = value;
-        }
     }
 
-    for (int i = 0; i < 81; i++) {
-        int value = tips[i];
-        if (value == 0)
-            tips[i] = num;
-        else
-            tips[i] = 0;
-    }
-
-    int count = 0;
+    // STEP3: check every box/row/col whether has the unique space to place `num`
     for (int i = 0; i < 9; i++) {
         int indexs[9] = {0};
         int index = 0;
@@ -196,32 +244,32 @@ int Sudoku::stepNumber(int num) {
         // get box unique index
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && mData[index] == 0) {
+        if (index != -1 && mData[index] == 0) {
             mData[index] = num;
-            count++;
-            outputDataStep(num, index, "exclusiveNumber by box");
+            mCount++;
+            outputDataStep(num, index, "exclusiveNumber by box", i);
         }
 
         // get row unique index
         Sudoku::getRowIndex(rowIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && mData[index] == 0) {
+        if (index != -1 && mData[index] == 0) {
             mData[index] = num;
-            count++;
-            outputDataStep(num, index, "exclusiveNumber by row");
+            mCount++;
+            outputDataStep(num, index, "exclusiveNumber by row", i);
         }
 
         // get col unique index
         Sudoku::getColumnIndex(colIndexs[i], indexs);
         index = getBoxUniqueIndex(tips, indexs);
-        if (index != 0 && mData[index] == 0) {
+        if (index != -1 && mData[index] == 0) {
             mData[index] = num;
-            count++;
-            outputDataStep(num, index, "exclusiveNumber by col");
+            mCount++;
+            outputDataStep(num, index, "exclusiveNumber by col", i);
         }
     }
 
-    return count;
+    return mCount-count;
 }
 
 void Sudoku::updateDataTips(int i, int * indexs) {
@@ -248,10 +296,15 @@ void Sudoku::updateDataFromTips() {
     }
 }
 
-void Sudoku::outputDataStep(int num, int index, const char * stepName) {
+void Sudoku::outputDataStep(int num, int index, const char * stepName, int i) {
+// #define DEBUG
 #ifdef DEBUG
-    printf("get number %d at %d:%d with %s\n",
-                num, index / 9 + 1, index % 9 + 1, stepName);
+    if (i != -1)
+        printf("get number %d at %d:%d with %s %d\n",
+                    num, index / 9 + 1, index % 9 + 1, stepName, i+1);
+    else
+        printf("get number %d at %d:%d with %s\n",
+                    num, index / 9 + 1, index % 9 + 1, stepName);
     outputData();
     printf("data count:%d\n", count());
     printf("================================================================\n\n");
@@ -339,25 +392,43 @@ int Sudoku::getIndex(int * tips) {
     return index;
 }
 
-// check the box whether has unique item, if has return the index
-// params: box81: 9x9 data array
-// params: boxIndexs: 3x3 box index array
-int Sudoku::getBoxUniqueIndex(int * box81, int * boxIndexs) {
-    int value = -1;
+/**
+* check the box whether has unique item, if has return the index
+* params: data: 9x9 data array with value 1 or 0
+* params: indexs: 3x3 index array
+* e.g.:  data array:
+* ┌───────┬───────┬───────┐
+* | 1   1 | 1 1 1 | 1 1 1 |
+* | 1 1 1 | 1 1 1 | 1 1 1 |
+* | 1 1 1 | 1 1 1 | 1 1 1 |
+* ├───────┼───────┼───────┤
+* | 1 1 1 | 1 1 1 | 1 1 1 |
+* | 1 1 1 | 1 1 1 | 1 1   |
+* | 1 1 1 | 1     | 1 1   |
+* ├───────┼───────┼───────┤
+* | 1 1 1 | 1 1 1 | 1 1 1 |
+* |     1 | 1     | 1 1 1 |
+* | 1 1 1 | 1     | 1 1 1 |
+* └───────┴───────┴───────┘
+* indexs: 0, 1, 2, 9, 10, 11, 18, 19, 20
+* return:1
+*/
+int Sudoku::getBoxUniqueIndex(int * data, int * indexs) {
+    int ret = -1;
 
     for (int i = 0; i < 9; i++) {
-        int index = boxIndexs[i];
-        // get one not-none item, we sign it;        
-        if (box81[index] != 0) {
-            // if there's more not-none items, just return 0
-            if (value != -1)
-                return 0;
+        int index = indexs[i];
+        // get space, we sign it;
+        if (data[index] == 0) {
+            // if there's more space, just return -1
+            if (ret != -1)
+                return -1;
 
-            value = index;
+            ret = index;
         }
     }
 
-    return value;
+    return ret;
 }
 
 void Sudoku::setBox(int * box, int * indexs, int len, int value) {

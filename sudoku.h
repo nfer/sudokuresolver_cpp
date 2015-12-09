@@ -37,7 +37,7 @@ private:
     void updateDataTips(int i, int * indexs);
     void updateDataFromTips();
 
-    void outputDataStep(int num, int index, const char * stepName);
+    void outputDataStep(int num, int index, const char * stepName, int i = -1);
 
 static void removeTipsWithDataIndexs(int * tips, int *data, int * indexs, int len);
 static void outputBox9(int index, int * box);

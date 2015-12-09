@@ -10,26 +10,13 @@ static int rowIndexs[] = {0, 9, 18, 27, 36, 45, 54, 63, 72}; // i * 9
 static int colIndexs[] = {0, 1,  2,  3,  4,  5,  6,  7,  8}; // i
 
 Sudoku::Sudoku() {
-    mData = new int[81];
-    mTips = new int*[81];
-    for(int i = 0; i < 81; i++)
-        mTips[i] = new int[9];
 }
 
 Sudoku::Sudoku(int *data) {
-    mData = new int[81];
-    mTips = new int*[81];
-    for(int i = 0; i < 81; i++)
-        mTips[i] = new int[9];
-
     init(data);
 }
 
 Sudoku::~Sudoku() {
-    delete []mData;
-    for(int i = 0; i < 81; i++)
-        delete []mTips[i];
-    delete []mTips;
 }
 
 void Sudoku::init(int *data) {

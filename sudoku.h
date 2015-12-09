@@ -27,10 +27,6 @@ public:
 private:
     Sudoku(const Sudoku& o);
 
-    void stepBox();
-    void stepRow();
-    void stepColumn();
-
     int  stepIndex(int index);
     int  stepNumber(int num);
 

@@ -108,30 +108,6 @@ bool Sudoku::exclusiveNumber() {
 }
 
 // =========================private functions==================================
-void Sudoku::stepBox() {
-    for (int i = 0; i < 81; i++) {
-        int indexs[9] = {0};
-        Sudoku::getBoxIndex(i, indexs);
-        updateDataTips(i, indexs);
-    }
-}
-
-void Sudoku::stepRow() {
-    for (int i = 0; i < 81; i++) {
-        int indexs[9] = {0};
-        Sudoku::getRowIndex(i, indexs);
-        updateDataTips(i, indexs);
-    }
-}
-
-void Sudoku::stepColumn() {
-    for (int i = 0; i < 81; i++) {
-        int indexs[9] = {0};
-        Sudoku::getColIndex(i, indexs);
-        updateDataTips(i, indexs);
-    }
-}
-
 /**
 * STEP1: exclusive values at the same box/row/col
 * STEP2: check whether the index has the unique value to set

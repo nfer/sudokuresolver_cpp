@@ -513,15 +513,17 @@ int Sudoku::checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type)
 
     for (int i = 0; i < 9; i++) {
         int value = data[indexs[i]];
+        if (value == 0)
+            continue;
+
         box[i] = value;
-        if (value != 0) {
-            flag[value-1]++;
-            count++;
-            index = indexs[i];
-        }
+
+        flag[value-1]++;
+        count++;
+        index = indexs[i];
 
         if (flag[value-1] > 1) {
-            printf("there is duplicate number %d\n", value);
+            printf("there is duplicate(%d) number %d\n", flag[value-1], value);
             outputBox9(box);
             return -1;
         }

@@ -31,7 +31,7 @@ private:
     int  stepIndex(int index);
     int  stepNumber(int num);
 
-    void updateDataTips(int i, int * indexs);
+    void updateDataTips(int value, int index);
     void updateDataFromTips();
 
     void outputDataStep(int num, int index, const char * stepName, int i = -1);

@@ -194,6 +194,7 @@ int Sudoku::stepIndex(int index) {
     mCount++;
     mData[index] = value;
     outputDataStep(value, index, "exclusiveRange");
+    updateDataTips(value, index);
     return value;
 }
 
@@ -285,6 +286,7 @@ int Sudoku::stepNumber(int num) {
             mData[index] = num;
             mCount++;
             outputDataStep(num, index, "exclusiveNumber by box", i);
+            updateDataTips(num, index);
         }
 
         // get row unique index
@@ -294,6 +296,7 @@ int Sudoku::stepNumber(int num) {
             mData[index] = num;
             mCount++;
             outputDataStep(num, index, "exclusiveNumber by row", i);
+            updateDataTips(num, index);
         }
 
         // get col unique index
@@ -303,21 +306,24 @@ int Sudoku::stepNumber(int num) {
             mData[index] = num;
             mCount++;
             outputDataStep(num, index, "exclusiveNumber by col", i);
+            updateDataTips(num, index);
         }
     }
 
     return mCount-count;
 }
 
-void Sudoku::updateDataTips(int i, int * indexs) {
-    if (mData[i] != 0)
-        return;
+void Sudoku::updateDataTips(int value, int index) {
+    int indexs[9] = {0};
+    if (value != 0) {
+        getBoxIndex(index, indexs);
+        removeTipsWithDataIndexs(mTips, indexs, value);
 
-    for (int j = 0; j < 9; j++) {
-        int index = indexs[j];
-        int value = mData[index];
-        if (value != 0)
-            mTips[i][value - 1] = 0;
+        getRowIndex(index, indexs);
+        removeTipsWithDataIndexs(mTips, indexs, value);
+
+        getColIndex(index, indexs);
+        removeTipsWithDataIndexs(mTips, indexs, value);
     }
 }
 

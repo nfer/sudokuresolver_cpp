@@ -94,6 +94,8 @@ start:
         goto start;
 
 end:
+    if (count != 81)
+        sudoku->outputDataTips();
     delete sudoku;
     return (count != 81);
 }

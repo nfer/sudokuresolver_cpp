@@ -16,6 +16,7 @@ public:
     ~Sudoku();
 
     void init(int * data);
+    void initTips();
     bool valid();
     int  count() const {return mCount;};
     void outputData();
@@ -112,6 +113,9 @@ static void signBoxWithIndexs(int * box, int * indexs);
 * params: indexs: 9 size indexs array(from getBoxIndex/getRowIndex/getColIndex)
 */
 static void removeValuesWithDataIndexs(int * availables, int *data, int * indexs);
+
+
+static void removeTipsWithDataIndexs(int tips[81][9], int indexs[9], int value);
 
 static int  getIndex(int * tips);
 static int  getBoxUniqueIndex(int * box, int * indexs);

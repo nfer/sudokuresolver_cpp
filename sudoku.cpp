@@ -14,6 +14,7 @@ Sudoku::Sudoku() {
 
 Sudoku::Sudoku(int *data) {
     init(data);
+    initTips();
 }
 
 Sudoku::~Sudoku() {
@@ -25,12 +26,28 @@ void Sudoku::init(int *data) {
         int value = data[i];
         mData[i] = value;
         if (value != 0) {
-            mTips[i][value - 1] = value;
             mCount++;
         } else {
             for (int j = 0; j < 9; j++) {
                 mTips[i][j] = j + 1;
             }
+        }
+    }
+}
+
+void Sudoku::initTips() {
+    for (int i = 0; i < 81; i++) {
+        int value = mData[i];
+        int indexs[9] = {0};
+        if (value != 0) {
+            getBoxIndex(i, indexs);
+            removeTipsWithDataIndexs(mTips, indexs, value);
+
+            getRowIndex(i, indexs);
+            removeTipsWithDataIndexs(mTips, indexs, value);
+
+            getColIndex(i, indexs);
+            removeTipsWithDataIndexs(mTips, indexs, value);
         }
     }
 }
@@ -339,6 +356,14 @@ void Sudoku::removeValuesWithDataIndexs(int * availables, int *data, int * index
         if (value != 0) {
             availables[value-1] = 0;
         }
+    }
+}
+
+void Sudoku::removeTipsWithDataIndexs(int tips[81][9], int indexs[9], int value) {
+    for (int i = 0; i < 9; i++) {
+        int index = indexs[i];
+
+        tips[index][value-1] = 0;
     }
 }
 

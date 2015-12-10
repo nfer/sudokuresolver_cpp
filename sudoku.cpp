@@ -38,16 +38,8 @@ void Sudoku::init(int *data) {
 void Sudoku::initTips() {
     for (int i = 0; i < 81; i++) {
         int value = mData[i];
-        int indexs[9] = {0};
         if (value != 0) {
-            getBoxIndex(i, indexs);
-            removeTipsWithDataIndexs(mTips, indexs, value);
-
-            getRowIndex(i, indexs);
-            removeTipsWithDataIndexs(mTips, indexs, value);
-
-            getColIndex(i, indexs);
-            removeTipsWithDataIndexs(mTips, indexs, value);
+            updateDataTips(value, i);
         }
     }
 }

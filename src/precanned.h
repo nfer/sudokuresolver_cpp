@@ -8,7 +8,7 @@ public:
     Precanned();
     ~Precanned();
 
-static bool parseSudokuFile(char * fileName, int * data);
+static bool parseSudokuFile(const char * fileName, int * data);
 static bool parseLine(char * line, int row, int * data);
 };
 

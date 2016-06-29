@@ -84,6 +84,10 @@ void Sudoku::outputDataTips() {
     }
 }
 
+void Sudoku::outputDataTips81() {
+    outputBox729(mTips);
+}
+
 bool Sudoku::exclusiveRange() {
     bool found = false;
 
@@ -422,6 +426,29 @@ void Sudoku::outputBox81(int *box) {
 
     printf("\n └───────┴───────┴───────┘\n");
     printf("   1 2 3   4 5 6   7 8 9  \n");
+}
+
+void Sudoku::outputBox729(int mTips[81][9]) {
+    for (int i = 0; i < 9; i++) {
+        if ( i == 0 )
+            printf(" ┌");
+        // else if ( i == 8 )
+        //     printf("┐\n");
+        else
+            printf("───┬─%d─┬───┬", i);
+    }
+    printf("───┬─%d─┬───┐\n", 9);
+
+    for (int i = 0; i < 27; ++i) {
+        for (int j = 0; j < 27; ++j) {
+            if (j == 0)
+                printf(" │");
+            printf(" %d │", mTips[i/3][j/3]);
+        }
+        if ( i != 26 )
+            printf("\n ├───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┤\n");
+    }
+    printf("\n └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘\n");
 }
 
 int Sudoku::getIndex(int * tips) {

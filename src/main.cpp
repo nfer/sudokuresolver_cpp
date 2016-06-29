@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
     bool found;
 
     if ( argc == 2 ) {
-        if ( !Precanned::parseSudokuFile(argv[argc-1], data) ) {
+        if ( Precanned::parseSudokuFile(argv[argc-1], data) != Precanned::ERR_NO_ERROR ) {
             printf("Parse Sudoku File failed\n");
             return 0;
         }

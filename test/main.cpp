@@ -9,33 +9,39 @@
 
 using namespace std;
 
-bool TestEmptyFile( bool expected ) {
+bool TestNoExistFile( int expected ) {
     int data[81] = { 0 };
-    bool ret = Precanned::parseSudokuFile("res/EmptyFile.sudoku", data);
+    int ret = Precanned::parseSudokuFile("res/NoExist.sudoku", data);
     return ret == expected;
 }
 
-bool TestEmptyLine( bool expected ) {
+bool TestEmptyFile( int expected ) {
     int data[81] = { 0 };
-    bool ret = Precanned::parseSudokuFile("res/EmptyLine.sudoku", data);
+    int ret = Precanned::parseSudokuFile("res/EmptyFile.sudoku", data);
     return ret == expected;
 }
 
-bool TestColNumLessThan9( bool expected ) {
+bool TestEmptyLine( int expected ) {
     int data[81] = { 0 };
-    bool ret = Precanned::parseSudokuFile("res/ColNumLessThan9.sudoku", data);
+    int ret = Precanned::parseSudokuFile("res/EmptyLine.sudoku", data);
     return ret == expected;
 }
 
-bool TestColNumBiggerThan9( bool expected ) {
+bool TestColNumLessThan9( int expected ) {
     int data[81] = { 0 };
-    bool ret = Precanned::parseSudokuFile("res/ColNumBiggerThan9.sudoku", data);
+    int ret = Precanned::parseSudokuFile("res/ColNumLessThan9.sudoku", data);
     return ret == expected;
 }
 
-bool TestValid( bool expected ) {
+bool TestColNumBiggerThan9( int expected ) {
     int data[81] = { 0 };
-    bool ret = Precanned::parseSudokuFile("res/Valid.sudoku", data);
+    int ret = Precanned::parseSudokuFile("res/ColNumBiggerThan9.sudoku", data);
+    return ret == expected;
+}
+
+bool TestValid( int expected ) {
+    int data[81] = { 0 };
+    int ret = Precanned::parseSudokuFile("res/Valid.sudoku", data);
     return ret == expected;
 }
 
@@ -44,9 +50,10 @@ bool TestValid( bool expected ) {
     else printf("%s test pass!\n", #func);
 
 int main(int argc, char * argv[]) {
-    TEST_RUN(TestEmptyFile, false)
-    TEST_RUN(TestEmptyLine, false)
-    TEST_RUN(TestColNumLessThan9, false)
-    TEST_RUN(TestColNumBiggerThan9, false)
-    TEST_RUN(TestValid, true)
+    TEST_RUN(TestNoExistFile, Precanned::ERR_FILE_NOTOPEN)
+    TEST_RUN(TestEmptyFile, Precanned::ERR_FILE_EMPTY)
+    TEST_RUN(TestEmptyLine, Precanned::ERR_BAD_LINE)
+    TEST_RUN(TestColNumLessThan9, Precanned::ERR_BAD_LINE)
+    TEST_RUN(TestColNumBiggerThan9, Precanned::ERR_BAD_LINE)
+    TEST_RUN(TestValid, Precanned::ERR_NO_ERROR)
 }

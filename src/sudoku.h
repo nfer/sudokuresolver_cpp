@@ -2,6 +2,10 @@
 #ifndef _SUDOKU_H
 #define _SUDOKU_H
 
+#ifndef SUDOKU_DEBUG
+#define SUDOKU_DEBUG 0
+#endif
+
 class Sudoku {
 
 public:
@@ -10,6 +14,12 @@ public:
         UNIQUE,
         FULL
     };
+    enum {
+        ERR_NO_ERROR = 0,
+        ERR_COL_DUPLICATE = -1,
+        ERR_ROW_DUPLICATE = -2,
+        ERR_BOX_DUPLICATE = -3,
+    } Sudoku_Error;
 
     Sudoku();
     Sudoku(int * data);
@@ -17,7 +27,7 @@ public:
 
     void init(int * data);
     void initTips();
-    bool valid();
+    int  valid();
     int  count() const {return mCount;};
     void outputData();
     void outputDataTips();

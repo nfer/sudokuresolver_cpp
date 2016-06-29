@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
     }
 
     Sudoku * sudoku = new Sudoku(data);
-    if (!sudoku->valid()) {
+    if ( sudoku->valid() != Sudoku::ERR_NO_ERROR ) {
         printf("Precanned data is not valid.\n");
         goto end;
     }

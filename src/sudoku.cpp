@@ -44,31 +44,31 @@ void Sudoku::initTips() {
     }
 }
 
-bool Sudoku::valid() {
+int Sudoku::valid() {
     int indexs[9] = {0};
     for (int i = 0; i < 9; i++) {
         // check box[i] valid
         Sudoku::getBoxIndex(boxIndexs[i], indexs);
         if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
-            printf("check box %d valid failed.\n", i);
-            return false;
+            if ( SUDOKU_DEBUG ) printf("check box %d valid failed.\n", i);
+            return Sudoku::ERR_BOX_DUPLICATE;
         }
 
         // check row[i] valid
         Sudoku::getRowIndex(rowIndexs[i], indexs);
         if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
-            printf("check row %d valid failed.\n", i);
-            return false;
+            if ( SUDOKU_DEBUG ) printf("check row %d valid failed.\n", i);
+            return Sudoku::ERR_ROW_DUPLICATE;
         }
 
         // check col[i] valid
         Sudoku::getColIndex(colIndexs[i], indexs);
         if (0 != Sudoku::checkDataWithIndexs(mData, indexs, NODUP)) {
-            printf("check col %d valid failed.\n", i);
-            return false;
+            if ( SUDOKU_DEBUG ) printf("check col %d valid failed.\n", i);
+            return Sudoku::ERR_COL_DUPLICATE;
         }
     }
-    return true;
+    return Sudoku::ERR_NO_ERROR;
 }
 
 void Sudoku::outputData() {
@@ -523,8 +523,10 @@ int Sudoku::checkDataWithIndexs(int * data, int * indexs, CHECK_VALID_TYPE type)
         index = indexs[i];
 
         if (flag[value-1] > 1) {
-            printf("there is duplicate(%d) number %d\n", flag[value-1], value);
-            outputBox9(box);
+            if ( SUDOKU_DEBUG ) {
+                printf("there is duplicate(%d) number %d\n", flag[value-1], value);
+                outputBox9(box);
+            }
             return -1;
         }
     }

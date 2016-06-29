@@ -1,6 +1,6 @@
 
 # Directories:
-DIR_CUR		= ./
+DIR_CUR		= ./src
 
 # Sources:
 SRC_CUR		= $(wildcard $(DIR_CUR)/*.cpp)

@@ -12,30 +12,25 @@ Precanned::~Precanned() {
 }
 
 // =========================static functions===================================
-bool Precanned::parse(int argc, char * argv[], int * data) {
-    if (argc == 1)
-        return true;
-
-    char * fileName = argv[argc-1];
-
+bool Precanned::parseSudokuFile(char * fileName, int * data) {
     FILE * fd = fopen(fileName, "r");
     if (NULL == fd) {
         printf("open file %s failed\n", fileName);
         return false;
     }
 
-    int count = 0;
+    int row = 0;
     char line[32] = {'\0'};
     while(fgets(line, sizeof(line), fd)) {
-        if (!parseLine(line, count, data)) {
+        if (!parseLine(line, row, data)) {
             printf("parse line %s failed\n", line);
             fclose(fd);
             return false;
         }
 
-        count++;
+        row++;
 
-        if (count == 9)
+        if (row == 9)
             break;
     }
 

@@ -44,9 +44,11 @@ int main(int argc, char * argv[])
     int count = 0, lastCount = -1, loop;
     bool found;
 
-    if (!Precanned::parse(argc, argv, data)) {
-        printf("Precanned parse failed\n");
-        return 0;
+    if ( argc == 2 ) {
+        if ( !Precanned::parseSudokuFile(argv[argc-1], data) ) {
+            printf("Parse Sudoku File failed\n");
+            return 0;
+        }
     }
 
     Sudoku * sudoku = new Sudoku(data);

@@ -28,6 +28,9 @@ void Sudoku::init(int *data) {
             mCount++;
         }
     }
+    for (int i = 0; i < 729; i++) {
+        mTips[i] = 0;
+    }
 }
 
 int Sudoku::valid() {
@@ -61,6 +64,10 @@ void Sudoku::outputData() {
     outputBox81(mData);
 }
 
+void Sudoku::outputDataTips() {
+    outputBox729(mTips);
+}
+
 // =========================private functions==================================
 
 // =========================static functions===================================
@@ -89,6 +96,22 @@ void Sudoku::outputBox81(int *box) {
 
     printf("\n └───────┴───────┴───────┘\n");
     printf("   1 2 3   4 5 6   7 8 9  \n");
+}
+
+void Sudoku::outputBox729(int *mTips) {
+    printf("\n ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐\n");
+
+    for (int i = 0; i < 27; ++i) {
+        for (int j = 0; j < 27; ++j) {
+            if (j == 0)
+                printf(" │");
+            printf(" %d │", mTips[i*27+j]);
+        }
+        if ( i != 26 )
+            printf("\n ├───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┤\n");
+    }
+
+    printf("\n └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘\n");
 }
 
 void Sudoku::getBoxIndex(int index, int * indexs) {

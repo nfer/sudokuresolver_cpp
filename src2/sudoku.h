@@ -29,6 +29,7 @@ public:
     int  valid();
     int  count() const {return mCount;};
     void outputData();
+    void outputDataTips();
 
     bool exclusiveRange();
     bool exclusiveNumber();
@@ -58,6 +59,8 @@ private:
 * NOTE: space means it's value is zore or undefined
 */
 static void outputBox81(int * box);
+
+static void outputBox729(int *mTips);
 
 /**
 * return the box indexs array of given index.

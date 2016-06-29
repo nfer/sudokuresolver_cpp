@@ -32,6 +32,8 @@ int main(int argc, char * argv[])
     sudoku->outputData();
     count = sudoku->count();
     printf("init data count %d\n", count);
+    printf("\n\n\n");
+    sudoku->outputDataTips();
 
 end:
     delete sudoku;
